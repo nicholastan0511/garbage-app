@@ -8,4 +8,5 @@ export type GarbageLocation = {
 export type Point = google.maps.LatLngLiteral & {
   key: string;
   address: string;
+  district: string;
 };

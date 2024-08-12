@@ -20,6 +20,7 @@ export default async function Home() {
       lng: parseFloat(point.long),
       key: point.id,
       address: point.location,
+      district: point.district,
     };
   });
 

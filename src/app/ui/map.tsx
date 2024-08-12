@@ -8,7 +8,7 @@ import {
   InfoWindow,
 } from "@vis.gl/react-google-maps";
 import { ReactNode } from "react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { Point } from "../lib/definitions";
 import Image from "next/image";
 import { Marker, MarkerClusterer } from "@googlemaps/markerclusterer";
@@ -25,6 +25,18 @@ export const MapComponent = ({
     lng: 121.5355982944703,
   };
 
+  const [handleInfoWindowClick, setHandleInfoWindowClick] = useState<
+    ((key: string) => void) | null
+  >(null);
+
+  // This callback is passed to Infos to manage the state internally
+  const setHandleInfoWindowClickCallback = useCallback(
+    (callback: (key: string) => void) => {
+      setHandleInfoWindowClick(() => callback);
+    },
+    []
+  );
+
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_MAPS_API_KEY as string}>
       {children}
@@ -34,29 +46,30 @@ export const MapComponent = ({
           mapId={process.env.NEXT_PUBLIC_MAP_ID}
           defaultZoom={17}
         >
-          <Markers points={points} />
+          <Markers
+            points={points}
+            handleInfoWindowClick={handleInfoWindowClick}
+          />
+          <Infos
+            points={points}
+            setHandleInfoWindowClick={setHandleInfoWindowClickCallback}
+          />
         </Map>
       </div>
     </APIProvider>
   );
 };
 
-const Markers = ({ points }: { points: Point[] }) => {
+const Markers = ({
+  points,
+  handleInfoWindowClick,
+}: {
+  points: Point[];
+  handleInfoWindowClick: any;
+}) => {
   const map = useMap();
   const [markers, setMarkers] = useState<{ [key: string]: Marker }>({});
   const clusterer = useRef<MarkerClusterer | null>(null);
-  const [infoWindows, setInfoWindows] = useState<string[]>([]);
-
-  const handleInfoWindowClick = (key: string) => {
-    setInfoWindows((prev) => [...prev, key]);
-  };
-
-  const closeOneInfoWindow = (key: string) => {
-    setInfoWindows((prev) => {
-      const temp = [...prev].filter((p) => p !== key);
-      return temp;
-    });
-  };
 
   useEffect(() => {
     if (!map) return;
@@ -66,7 +79,6 @@ const Markers = ({ points }: { points: Point[] }) => {
   }, [map]);
 
   useEffect(() => {
-    console.log("IM RENDERED");
     clusterer.current?.clearMarkers();
     clusterer.current?.addMarkers(Object.values(markers));
   }, [markers]);
@@ -96,23 +108,6 @@ const Markers = ({ points }: { points: Point[] }) => {
           handleInfoWindowClick={handleInfoWindowClick}
         />
       ))}
-      {infoWindows.map((key) => {
-        const point = points.find((point) => point.key);
-        return (
-          key && (
-            <InfoWindow
-              key={key}
-              onClose={() => closeOneInfoWindow(key)}
-              position={{
-                lat: point?.lat as number,
-                lng: point?.lng as number,
-              }}
-            >
-              <p>{point?.address}</p>
-            </InfoWindow>
-          )
-        );
-      })}
     </>
   );
 };
@@ -126,8 +121,6 @@ const MarkerComponent = ({
   setMarkerRef: any;
   handleInfoWindowClick: any;
 }) => {
-  // will trigger rerendering of one marker component, which will trigger the ref, which will trigger the setMarkerRef, triggering the state mounted on the Markers component, triggering the rerendering of the entire Markers component and its subcomponent
-  // const [open, setOpen] = useState<boolean>(false);
   return (
     <>
       <AdvancedMarker
@@ -135,15 +128,58 @@ const MarkerComponent = ({
         key={point.key}
         ref={(marker) => setMarkerRef(marker, point.key)}
         onClick={() => handleInfoWindowClick(point.key)}
-        // onClick={() => setOpen(true)}
       >
         <Image src="garbage-colored.svg" alt="garbage" width={30} height={30} />
       </AdvancedMarker>
-      {/* {open && (
-        <InfoWindow onClose={() => setOpen(false)}>
-          <p className="text-black">{point.address}</p>
-        </InfoWindow>
-      )} */}
     </>
   );
+};
+
+// Isolate info window state
+const Infos = ({
+  points,
+  setHandleInfoWindowClick,
+}: {
+  points: Point[];
+  setHandleInfoWindowClick: (callback: (key: string) => void) => void;
+}) => {
+  const [infoWindows, setInfoWindows] = useState<string[]>([]);
+
+  const handleInfoWindowClick = useCallback((key: string) => {
+    setInfoWindows((prev) => [...prev, key]);
+  }, []);
+
+  const closeInfoWindow = useCallback((key: string) => {
+    setInfoWindows((prev) => prev.filter((k) => k !== key));
+  }, []);
+
+  // Register the callback function to be used by Markers
+  useEffect(() => {
+    setHandleInfoWindowClick(handleInfoWindowClick);
+  }, [handleInfoWindowClick, setHandleInfoWindowClick]);
+
+  // Memoize the info windows to avoid re-rendering the component
+  const infoWindowComponents = useMemo(() => {
+    return infoWindows.map((key) => {
+      const point = points.find((point) => point.key === key);
+      return (
+        key &&
+        point && (
+          <InfoWindow
+            key={key}
+            onClose={() => closeInfoWindow(key)}
+            position={{
+              lat: point.lat,
+              lng: point.lng,
+            }}
+          >
+            <h1 className="text-bold text-xl">{point.district}</h1>
+            <p>{point.address}</p>
+          </InfoWindow>
+        )
+      );
+    });
+  }, [infoWindows, points, closeInfoWindow]);
+
+  return <>{infoWindowComponents}</>;
 };
