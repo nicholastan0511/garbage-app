@@ -5,6 +5,7 @@ import {
   AdvancedMarker,
   useMap,
   Map,
+  InfoWindow,
 } from "@vis.gl/react-google-maps";
 import { ReactNode } from "react";
 import { useState, useRef, useEffect } from "react";
@@ -44,6 +45,18 @@ const Markers = ({ points }: { points: Point[] }) => {
   const map = useMap();
   const [markers, setMarkers] = useState<{ [key: string]: Marker }>({});
   const clusterer = useRef<MarkerClusterer | null>(null);
+  const [infoWindows, setInfoWindows] = useState<string[]>([]);
+
+  const handleInfoWindowClick = (key: string) => {
+    setInfoWindows((prev) => [...prev, key]);
+  };
+
+  const closeOneInfoWindow = (key: string) => {
+    setInfoWindows((prev) => {
+      const temp = [...prev].filter((p) => p !== key);
+      return temp;
+    });
+  };
 
   useEffect(() => {
     if (!map) return;
@@ -80,8 +93,26 @@ const Markers = ({ points }: { points: Point[] }) => {
           point={point}
           key={point.key}
           setMarkerRef={setMarkerRef}
+          handleInfoWindowClick={handleInfoWindowClick}
         />
       ))}
+      {infoWindows.map((key) => {
+        const point = points.find((point) => point.key);
+        return (
+          key && (
+            <InfoWindow
+              key={key}
+              onClose={() => closeOneInfoWindow(key)}
+              position={{
+                lat: point?.lat as number,
+                lng: point?.lng as number,
+              }}
+            >
+              <p>{point?.address}</p>
+            </InfoWindow>
+          )
+        );
+      })}
     </>
   );
 };
@@ -89,17 +120,30 @@ const Markers = ({ points }: { points: Point[] }) => {
 const MarkerComponent = ({
   point,
   setMarkerRef,
+  handleInfoWindowClick,
 }: {
   point: Point;
   setMarkerRef: any;
+  handleInfoWindowClick: any;
 }) => {
+  // will trigger rerendering of one marker component, which will trigger the ref, which will trigger the setMarkerRef, triggering the state mounted on the Markers component, triggering the rerendering of the entire Markers component and its subcomponent
+  // const [open, setOpen] = useState<boolean>(false);
   return (
-    <AdvancedMarker
-      position={point}
-      key={point.key}
-      ref={(marker) => setMarkerRef(marker, point.key)}
-    >
-      <Image src="garbage-colored.svg" alt="garbage" width={30} height={30} />
-    </AdvancedMarker>
+    <>
+      <AdvancedMarker
+        position={point}
+        key={point.key}
+        ref={(marker) => setMarkerRef(marker, point.key)}
+        onClick={() => handleInfoWindowClick(point.key)}
+        // onClick={() => setOpen(true)}
+      >
+        <Image src="garbage-colored.svg" alt="garbage" width={30} height={30} />
+      </AdvancedMarker>
+      {/* {open && (
+        <InfoWindow onClose={() => setOpen(false)}>
+          <p className="text-black">{point.address}</p>
+        </InfoWindow>
+      )} */}
+    </>
   );
 };

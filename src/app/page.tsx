@@ -2,8 +2,6 @@ import { fetchAllGarbageData } from "./lib/data";
 import { MapComponent } from "./ui/map";
 import Image from "next/image";
 import { lusitana } from "./ui/fonts";
-import { Suspense } from "react";
-import MapLoading from "./ui/map-loading";
 
 const mockData = [
   {
