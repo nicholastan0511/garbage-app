@@ -13,7 +13,14 @@ const mockData = [
   },
 ];
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams?: {
+    lat: string;
+    lng: string;
+  };
+}) {
   const data = await fetchAllGarbageData();
   const extractedLatLng = data.map((point) => {
     return {
@@ -25,6 +32,14 @@ export default async function Home() {
     };
   });
 
+  const lat = searchParams?.lat;
+  const lng = searchParams?.lng;
+
+  const userLocation = {
+    lat: parseFloat(lat as string),
+    lng: parseFloat(lng as string),
+  };
+
   return (
     <div className="h-screen w-screen bg-white">
       <div className="h-full flex flex-col justify-center items-center gap-5 font-bold text-2xl">
@@ -33,7 +48,7 @@ export default async function Home() {
           <Image src="garbage.svg" height={20} width={30} alt="bin" />
         </div>
         <Geolocation />
-        <MapComponent points={extractedLatLng}>
+        <MapComponent points={extractedLatLng} userLocation={userLocation}>
           <></>
         </MapComponent>
       </div>

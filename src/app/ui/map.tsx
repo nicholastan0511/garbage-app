@@ -16,9 +16,11 @@ import { Marker, MarkerClusterer } from "@googlemaps/markerclusterer";
 export const MapComponent = ({
   children,
   points,
+  userLocation,
 }: {
   children: ReactNode;
   points: Point[];
+  userLocation: google.maps.LatLngLiteral | undefined;
 }) => {
   const position: google.maps.LatLngLiteral = {
     lat: 25.019238810705918,
@@ -49,6 +51,7 @@ export const MapComponent = ({
           <Markers
             points={points}
             handleInfoWindowClick={handleInfoWindowClick}
+            userLocation={userLocation}
           />
           <Infos
             points={points}
@@ -63,9 +66,11 @@ export const MapComponent = ({
 const Markers = ({
   points,
   handleInfoWindowClick,
+  userLocation,
 }: {
   points: Point[];
   handleInfoWindowClick: any;
+  userLocation: google.maps.LatLngLiteral | undefined;
 }) => {
   const map = useMap();
   const [markers, setMarkers] = useState<{ [key: string]: Marker }>({});
@@ -98,6 +103,7 @@ const Markers = ({
     });
   };
 
+  console.log(userLocation);
   return (
     <>
       {points.map((point) => (
@@ -108,6 +114,31 @@ const Markers = ({
           handleInfoWindowClick={handleInfoWindowClick}
         />
       ))}
+
+      {userLocation && userLocation.lat && userLocation.lng && (
+        <UserMarker userLocation={userLocation} />
+      )}
+    </>
+  );
+};
+
+const UserMarker = ({
+  userLocation,
+}: {
+  userLocation: google.maps.LatLngLiteral;
+}) => {
+  const [open, setOpen] = useState<boolean>(false);
+
+  return (
+    <>
+      <AdvancedMarker position={userLocation} onClick={() => setOpen(true)}>
+        <Image src="user.svg" width={40} height={40} alt="user" />
+      </AdvancedMarker>
+      {open && (
+        <InfoWindow position={userLocation} onClose={() => setOpen(false)}>
+          <p>You are here!</p>
+        </InfoWindow>
+      )}
     </>
   );
 };
@@ -118,7 +149,7 @@ const MarkerComponent = ({
   handleInfoWindowClick,
 }: {
   point: Point;
-  setMarkerRef: any;
+  setMarkerRef?: any;
   handleInfoWindowClick: any;
 }) => {
   return (
