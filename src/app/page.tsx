@@ -1,5 +1,6 @@
 import { fetchAllGarbageData } from "./lib/data";
 import { MapComponent } from "./ui/map";
+import Geolocation from "./ui/geolocation";
 import Image from "next/image";
 import { lusitana } from "./ui/fonts";
 
@@ -31,6 +32,7 @@ export default async function Home() {
           <h1 className={`${lusitana.className} text-black`}>Taipei Bins</h1>
           <Image src="garbage.svg" height={20} width={30} alt="bin" />
         </div>
+        <Geolocation />
         <MapComponent points={extractedLatLng}>
           <></>
         </MapComponent>
