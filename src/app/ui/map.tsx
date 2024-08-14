@@ -118,9 +118,9 @@ const Markers = ({
         />
       ))}
 
-      {userLocation && userLocation.lat && userLocation.lng && (
+      {userLocation && userLocation.lat && userLocation.lng ? (
         <UserMarker userLocation={userLocation} />
-      )}
+      ) : null}
     </>
   );
 };
