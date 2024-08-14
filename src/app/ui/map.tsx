@@ -12,6 +12,7 @@ import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { Point } from "../lib/definitions";
 import Image from "next/image";
 import { Marker, MarkerClusterer } from "@googlemaps/markerclusterer";
+import Directions from "./directions";
 
 export const MapComponent = ({
   children,
@@ -47,6 +48,7 @@ export const MapComponent = ({
           defaultCenter={position}
           mapId={process.env.NEXT_PUBLIC_MAP_ID}
           defaultZoom={17}
+          fullscreenControl={false}
         >
           <Markers
             points={points}
@@ -57,6 +59,7 @@ export const MapComponent = ({
             points={points}
             setHandleInfoWindowClick={setHandleInfoWindowClickCallback}
           />
+          <Directions userLocation={userLocation} />
         </Map>
       </div>
     </APIProvider>

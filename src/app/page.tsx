@@ -10,6 +10,7 @@ const mockData = [
     lng: 121.507258,
     key: "bd852f88-2287-4d55-a20d-137f9ea08c3e",
     address: "環河北路三段跨堤路橋入口處",
+    district: "Shilin",
   },
 ];
 
@@ -48,7 +49,7 @@ export default async function Home({
           <Image src="garbage.svg" height={20} width={30} alt="bin" />
         </div>
         <Geolocation />
-        <MapComponent points={extractedLatLng} userLocation={userLocation}>
+        <MapComponent points={mockData} userLocation={userLocation}>
           <></>
         </MapComponent>
       </div>
