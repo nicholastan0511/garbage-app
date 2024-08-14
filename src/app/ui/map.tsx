@@ -192,6 +192,8 @@ const Infos = ({
     setHandleInfoWindowClick(handleInfoWindowClick);
   }, [handleInfoWindowClick, setHandleInfoWindowClick]);
 
+  const handleShowRoute = () => {};
+
   // Memoize the info windows to avoid re-rendering the component
   const infoWindowComponents = useMemo(() => {
     return infoWindows.map((key) => {
@@ -207,8 +209,13 @@ const Infos = ({
               lng: point.lng,
             }}
           >
-            <h1 className="text-bold text-xl">{point.district}</h1>
-            <p>{point.address}</p>
+            <div className="flex flex-col gap-3">
+              <h1 className="text-bold text-xl">{point.district}</h1>
+              <p>{point.address}</p>
+              <button className="btn btn-primary btn-sm uppercase">
+                Show route
+              </button>
+            </div>
           </InfoWindow>
         )
       );

@@ -14,11 +14,12 @@ const Directions = ({
     useState<google.maps.DirectionsRenderer>();
   const [routes, setRoutes] = useState<google.maps.DirectionsRoute[]>([]);
   const [routeIndex, setRouteIndex] = useState(0);
+  const [destination, setDestination] = useState<google.maps.LatLngLiteral>();
 
   const selectedRoute = routes[routeIndex];
   const leg = selectedRoute?.legs[0];
 
-  //   instantiate function state
+  // instantiate function state
   useEffect(() => {
     if (!map || !routesLibrary) return;
     setDirectionsService(new routesLibrary.DirectionsService());
@@ -32,7 +33,7 @@ const Directions = ({
     directionsService
       .route({
         origin: userLocation,
-        destination: "National Taiwan University",
+        destination: destination || "National Taiwan University",
         travelMode: google.maps.TravelMode.DRIVING,
         provideRouteAlternatives: true,
       })
