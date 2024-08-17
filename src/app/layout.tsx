@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { inter } from "./ui/fonts";
+import { mono } from "./ui/fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -14,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="bg-white">
-      <body className={inter.className}>{children}</body>
+      <body className={mono.className}>{children}</body>
     </html>
   );
 }

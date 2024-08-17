@@ -3,8 +3,10 @@ import { useEffect, useState } from "react";
 
 const Directions = ({
   userLocation,
+  destination,
 }: {
   userLocation: google.maps.LatLngLiteral | undefined;
+  destination: google.maps.LatLngLiteral;
 }) => {
   const map = useMap();
   const routesLibrary = useMapsLibrary("routes");
@@ -14,10 +16,11 @@ const Directions = ({
     useState<google.maps.DirectionsRenderer>();
   const [routes, setRoutes] = useState<google.maps.DirectionsRoute[]>([]);
   const [routeIndex, setRouteIndex] = useState(0);
-  const [destination, setDestination] = useState<google.maps.LatLngLiteral>();
 
   const selectedRoute = routes[routeIndex];
   const leg = selectedRoute?.legs[0];
+
+  console.log("destination", destination);
 
   // instantiate function state
   useEffect(() => {

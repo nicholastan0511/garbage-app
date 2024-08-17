@@ -13,15 +13,18 @@ import { Point } from "../lib/definitions";
 import Image from "next/image";
 import { Marker, MarkerClusterer } from "@googlemaps/markerclusterer";
 import Directions from "./directions";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 export const MapComponent = ({
   children,
   points,
   userLocation,
+  destination,
 }: {
   children: ReactNode;
   points: Point[];
   userLocation: google.maps.LatLngLiteral | undefined;
+  destination: google.maps.LatLngLiteral;
 }) => {
   const position: google.maps.LatLngLiteral = {
     lat: 25.019238810705918,
@@ -59,7 +62,7 @@ export const MapComponent = ({
             points={points}
             setHandleInfoWindowClick={setHandleInfoWindowClickCallback}
           />
-          <Directions userLocation={userLocation} />
+          <Directions userLocation={userLocation} destination={destination} />
         </Map>
       </div>
     </APIProvider>
@@ -177,6 +180,10 @@ const Infos = ({
   points: Point[];
   setHandleInfoWindowClick: (callback: (key: string) => void) => void;
 }) => {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const { replace } = useRouter();
+
   const [infoWindows, setInfoWindows] = useState<string[]>([]);
 
   const handleInfoWindowClick = useCallback((key: string) => {
@@ -192,7 +199,14 @@ const Infos = ({
     setHandleInfoWindowClick(handleInfoWindowClick);
   }, [handleInfoWindowClick, setHandleInfoWindowClick]);
 
-  const handleShowRoute = () => {};
+  const handleShowRoute = (point: Point) => {
+    const { lat, lng } = point;
+    const params = new URLSearchParams(searchParams);
+    if (lat) params.set("destination_lat", lat.toString());
+    if (lng) params.set("destination_lng", lng.toString());
+
+    replace(`${pathname}?${params.toString()}`);
+  };
 
   // Memoize the info windows to avoid re-rendering the component
   const infoWindowComponents = useMemo(() => {
@@ -212,7 +226,10 @@ const Infos = ({
             <div className="flex flex-col gap-3">
               <h1 className="text-bold text-xl">{point.district}</h1>
               <p>{point.address}</p>
-              <button className="btn btn-primary btn-sm uppercase">
+              <button
+                className="btn btn-primary btn-sm uppercase"
+                onClick={() => handleShowRoute(point)}
+              >
                 Show route
               </button>
             </div>

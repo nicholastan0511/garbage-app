@@ -1,4 +1,5 @@
 import { sql } from "@vercel/postgres";
+import axios from "axios";
 
 export const fetchAllGarbageData = async () => {
   try {
@@ -11,4 +12,17 @@ export const fetchAllGarbageData = async () => {
     console.error("Database Error:", err);
     throw new Error("Failed to fetch location data.");
   }
+};
+
+export const fetchUserLocality = async (
+  userLocation: google.maps.LatLngLiteral
+) => {
+  const { lat, lng } = userLocation;
+  if (!lat || !lng) return;
+
+  const locality = await axios.get(
+    `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`
+  );
+
+  return locality.data;
 };
