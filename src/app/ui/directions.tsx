@@ -3,6 +3,7 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
 import Para from "./para-direction";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const Directions = ({
   userLocation,
@@ -19,6 +20,11 @@ const Directions = ({
     useState<google.maps.DirectionsRenderer>();
   const [routes, setRoutes] = useState<google.maps.DirectionsRoute[]>([]);
   const [routeIndex, setRouteIndex] = useState(0);
+  const [close, setClose] = useState(false);
+
+  const { replace } = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
 
   const selectedRoute = routes[routeIndex];
   const leg = selectedRoute?.legs[0];
@@ -43,6 +49,8 @@ const Directions = ({
     )
       return;
 
+    if (!directionsRenderer.getMap()) directionsRenderer.setMap(map);
+
     directionsService
       .route({
         origin: userLocation,
@@ -53,6 +61,7 @@ const Directions = ({
       .then((res) => {
         directionsRenderer.setDirections(res);
         setRoutes(res.routes);
+        setClose(false);
       });
   }, [directionsService, directionsRenderer, userLocation]);
 
@@ -63,6 +72,22 @@ const Directions = ({
   }, [routeIndex, directionsRenderer]);
 
   if (!leg) return null;
+
+  console.log(directionsRenderer?.getMap());
+  console.log("im rerendered");
+
+  const handleCloseDirections = () => {
+    if (directionsRenderer) {
+      const params = new URLSearchParams(searchParams);
+      params.delete("destination_lat");
+      params.delete("destination_lng");
+      replace(`${pathname}?${params.toString()}`);
+      directionsRenderer.setMap(null);
+      setClose(true);
+    }
+  };
+
+  if (close) return null;
 
   return (
     <div className="absolute left-3 bottom-3 xl:bottom-auto xl:left-auto xl:top-3 xl:right-3 glass rounded-xl flex flex-col py-3 px-5 justify-center 2xl:gap-5 w-1/2 xl:w-1/3 overflow-x-scroll">
@@ -94,6 +119,12 @@ const Directions = ({
             );
           })}
         </ul>
+      </div>
+      <div
+        className="hover:cursor-pointer text-xs text-black absolute top-3 right-3"
+        onClick={handleCloseDirections}
+      >
+        x
       </div>
     </div>
   );
