@@ -1,5 +1,8 @@
+"use client";
+
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
+import Para from "./para-direction";
 
 const Directions = ({
   userLocation,
@@ -20,8 +23,6 @@ const Directions = ({
   const selectedRoute = routes[routeIndex];
   const leg = selectedRoute?.legs[0];
 
-  console.log("destination", destination);
-
   // instantiate function state
   useEffect(() => {
     if (!map || !routesLibrary) return;
@@ -31,12 +32,21 @@ const Directions = ({
 
   // render direction when ready
   useEffect(() => {
-    if (!directionsService || !directionsRenderer || !userLocation) return;
+    if (
+      !directionsService ||
+      !directionsRenderer ||
+      !userLocation ||
+      !userLocation.lat ||
+      !userLocation.lng ||
+      !destination.lat ||
+      !destination.lng
+    )
+      return;
 
     directionsService
       .route({
         origin: userLocation,
-        destination: destination || "National Taiwan University",
+        destination: destination,
         travelMode: google.maps.TravelMode.DRIVING,
         provideRouteAlternatives: true,
       })
@@ -52,30 +62,32 @@ const Directions = ({
     directionsRenderer.setRouteIndex(routeIndex);
   }, [routeIndex, directionsRenderer]);
 
-  console.log(routes);
-
   if (!leg) return null;
 
   return (
-    <div className="absolute top-3 right-3 bg-white rounded-xl p-5 flex flex-col gap-5">
+    <div className="absolute left-3 bottom-3 xl:bottom-auto xl:left-auto xl:top-3 xl:right-3 bg-white rounded-xl flex flex-col py-3 px-5 justify-center 2xl:gap-5 w-1/2 xl:w-1/3 overflow-x-scroll">
       <div>
-        <h1>{selectedRoute.summary}</h1>
+        <h1 className="text-sm xl:text-lg text-black">
+          {selectedRoute.summary}
+        </h1>
         <div>
-          <p className="font-light text-lg">Start: {leg.start_address}</p>
-          <p className="font-light text-lg">End: {leg.end_address}</p>
-          <p className="font-light text-lg">Distance: {leg.distance?.text}</p>
-          <p className="font-light text-lg">Duration: {leg.distance?.text}</p>
+          <Para>Start: {leg.start_address}</Para>
+          <Para>End: {leg.end_address}</Para>
+          <Para>Distance: {leg.distance?.text}</Para>
+          <Para>Duration: {leg.duration?.text}</Para>
         </div>
       </div>
       <div>
-        <h1>Other routes</h1>
-        <ul className="list-disc pl-10">
+        <h1 className="text-sm text-black font-extrabold xl:text-lg">
+          Other routes
+        </h1>
+        <ul className="list-disc pl-3">
           {routes.map((route, index) => {
             return (
               <li
                 key={route.summary}
                 onClick={() => setRouteIndex(index)}
-                className="font-light text-lg hover:cursor-pointer"
+                className="text-black font-light text-xs xl:text-sm hover:cursor-pointer leading-none"
               >
                 {route.summary}
               </li>

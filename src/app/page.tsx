@@ -2,6 +2,11 @@ import { fetchAllGarbageData, fetchUserLocality } from "./lib/data";
 import { MapComponent } from "./ui/map";
 import Geolocation from "./ui/geolocation";
 import Image from "next/image";
+import Directions from "./ui/directions";
+import { haversine_distance } from "./lib/helper";
+import Menu from "./ui/map-menu";
+import ClosestLocation from "./ui/closest-location";
+import { Point } from "./lib/definitions";
 
 const mockData = [
   {
@@ -13,8 +18,8 @@ const mockData = [
   },
 ];
 
-const localities = {
-  "Da'an": "大安區",
+const localities: { [key: string]: string } = {
+  "Da’an": "大安區",
   Shilin: "士林區",
   "Xinyi District": "信義",
   "Wenshan District": "文山區",
@@ -36,6 +41,7 @@ export default async function Home({
     lng: string;
     destination_lat: string;
     destination_lng: string;
+    district: string;
   };
 }) {
   // format data to fit Point type
@@ -59,10 +65,39 @@ export default async function Home({
     lng: parseFloat(lng as string),
   };
 
-  let userLocality = null;
+  let userLocality: string | null = null;
   if (userLocation.lat && userLocation.lng) {
-    userLocality = await fetchUserLocality(userLocation);
-    console.log(userLocality.locality);
+    const data = await fetchUserLocality(userLocation);
+    userLocality = data.locality;
+  }
+
+  // filter garbage locations based on user's locality
+  let filteredLocations = extractedLatLng.filter((location) => {
+    let district;
+    if (userLocality) district = localities[userLocality];
+    return location.district === district;
+  });
+
+  const locationsWithDistance = filteredLocations.map((location) => {
+    const distance = haversine_distance(userLocation, {
+      lat: location.lat,
+      lng: location.lng,
+    });
+
+    return {
+      ...location,
+      distance: Math.round(distance * 100) / 100,
+    };
+  });
+
+  let closestLocation: (Point & { distance: number }) | null = null;
+
+  if (locationsWithDistance) {
+    locationsWithDistance.forEach((location, index) => {
+      if (index === 0) closestLocation = location;
+      else if (closestLocation && location.distance < closestLocation.distance)
+        closestLocation = location;
+    });
   }
 
   const destination = {
@@ -70,20 +105,23 @@ export default async function Home({
     lng: parseFloat(searchParams?.destination_lng as string),
   };
 
+  if (searchParams?.district) {
+    filteredLocations = extractedLatLng.filter(
+      (location) => location.district === searchParams.district
+    );
+  }
+
   return (
     <div className="h-screen w-screen bg-white">
       <div className="h-full flex flex-col justify-center items-center gap-5 font-bold text-2xl">
-        <div className="flex gap-5">
-          <h1 className="text-black">Taipei Bins</h1>
-          <Image src="garbage.svg" height={20} width={30} alt="bin" />
-        </div>
         <Geolocation />
-        <MapComponent
-          points={extractedLatLng}
-          userLocation={userLocation}
-          destination={destination}
-        >
-          <></>
+        <Menu localities={localities} />
+        <MapComponent points={filteredLocations} userLocation={userLocation}>
+          {closestLocation && (
+            <ClosestLocation closestLocation={closestLocation} />
+          )}
+
+          <Directions userLocation={userLocation} destination={destination} />
         </MapComponent>
       </div>
     </div>

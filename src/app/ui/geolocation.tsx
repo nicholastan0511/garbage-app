@@ -32,7 +32,6 @@ const Geolocation = () => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude: lat, longitude: lng } = position.coords;
-          console.log(position);
           setLocation({ lat, lng });
         },
         (err) => {
@@ -61,18 +60,7 @@ const Geolocation = () => {
     }
   }, [location]);
 
-  return (
-    <div>
-      {error && <p>Error: {error}</p>}
-      {location ? (
-        <p>
-          Latitude: {location.lat}, Longitude: {location.lng}
-        </p>
-      ) : (
-        !error && <p>Fetching location...</p>
-      )}
-    </div>
-  );
+  return null;
 };
 
 export default Geolocation;

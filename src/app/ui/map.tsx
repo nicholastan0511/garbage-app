@@ -12,19 +12,16 @@ import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { Point } from "../lib/definitions";
 import Image from "next/image";
 import { Marker, MarkerClusterer } from "@googlemaps/markerclusterer";
-import Directions from "./directions";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 export const MapComponent = ({
   children,
   points,
   userLocation,
-  destination,
 }: {
   children: ReactNode;
   points: Point[];
   userLocation: google.maps.LatLngLiteral | undefined;
-  destination: google.maps.LatLngLiteral;
 }) => {
   const position: google.maps.LatLngLiteral = {
     lat: 25.019238810705918,
@@ -45,8 +42,7 @@ export const MapComponent = ({
 
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_MAPS_API_KEY as string}>
-      {children}
-      <div className="h-2/3 w-2/3 rounded-xl">
+      <div className="h-2/3 w-full xl:w-2/3 rounded-xl">
         <Map
           defaultCenter={position}
           mapId={process.env.NEXT_PUBLIC_MAP_ID}
@@ -62,7 +58,7 @@ export const MapComponent = ({
             points={points}
             setHandleInfoWindowClick={setHandleInfoWindowClickCallback}
           />
-          <Directions userLocation={userLocation} destination={destination} />
+          {children}
         </Map>
       </div>
     </APIProvider>
@@ -108,8 +104,6 @@ const Markers = ({
       }
     });
   };
-
-  console.log(userLocation);
   return (
     <>
       {points.map((point) => (
@@ -138,11 +132,11 @@ const UserMarker = ({
   return (
     <>
       <AdvancedMarker position={userLocation} onClick={() => setOpen(true)}>
-        <Image src="user.svg" width={40} height={40} alt="user" />
+        <Image src="user.svg" width={80} height={80} alt="user" />
       </AdvancedMarker>
       {open && (
         <InfoWindow position={userLocation} onClose={() => setOpen(false)}>
-          <p>You are here!</p>
+          <p className="text-black text-sm">You are here!</p>
         </InfoWindow>
       )}
     </>
@@ -204,8 +198,8 @@ const Infos = ({
     const params = new URLSearchParams(searchParams);
     if (lat) params.set("destination_lat", lat.toString());
     if (lng) params.set("destination_lng", lng.toString());
-
     replace(`${pathname}?${params.toString()}`);
+    closeInfoWindow(point.key);
   };
 
   // Memoize the info windows to avoid re-rendering the component
@@ -224,8 +218,10 @@ const Infos = ({
             }}
           >
             <div className="flex flex-col gap-3">
-              <h1 className="text-bold text-xl">{point.district}</h1>
-              <p>{point.address}</p>
+              <h1 className="text-extrabold text-xl text-black">
+                {point.district}
+              </h1>
+              <p className="text-black font-light">{point.address}</p>
               <button
                 className="btn btn-primary btn-sm uppercase"
                 onClick={() => handleShowRoute(point)}
