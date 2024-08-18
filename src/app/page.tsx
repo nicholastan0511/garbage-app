@@ -115,7 +115,7 @@ export default async function Home({
     <div className="h-screen w-screen bg-white">
       <div className="h-full flex flex-col justify-center items-center gap-5 font-bold text-2xl">
         <Geolocation />
-        <Menu localities={localities} />
+        <Menu localities={localities} defaultValue={searchParams?.district} />
         <MapComponent points={filteredLocations} userLocation={userLocation}>
           {closestLocation && (
             <ClosestLocation closestLocation={closestLocation} />

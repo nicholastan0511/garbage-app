@@ -1,7 +1,13 @@
 "use client";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
-const Menu = ({ localities }: { localities: { [key: string]: string } }) => {
+const Menu = ({
+  localities,
+  defaultValue,
+}: {
+  localities: { [key: string]: string };
+  defaultValue: string | undefined;
+}) => {
   const districts = Object.entries(localities);
   const { replace } = useRouter();
   const pathname = usePathname();
@@ -22,7 +28,7 @@ const Menu = ({ localities }: { localities: { [key: string]: string } }) => {
         id="districts"
         className="text-black bg-white outline-none rounded-xl border-solid border-4 hover:cursor-pointer  font-light p-3"
         onChange={({ target }) => handleSelect(target.value)}
-        defaultValue="option"
+        defaultValue={defaultValue || "option"}
       >
         <option value="option" disabled>
           Choose a district

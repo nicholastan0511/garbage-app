@@ -65,7 +65,7 @@ const Directions = ({
   if (!leg) return null;
 
   return (
-    <div className="absolute left-3 bottom-3 xl:bottom-auto xl:left-auto xl:top-3 xl:right-3 bg-white rounded-xl flex flex-col py-3 px-5 justify-center 2xl:gap-5 w-1/2 xl:w-1/3 overflow-x-scroll">
+    <div className="absolute left-3 bottom-3 xl:bottom-auto xl:left-auto xl:top-3 xl:right-3 glass rounded-xl flex flex-col py-3 px-5 justify-center 2xl:gap-5 w-1/2 xl:w-1/3 overflow-x-scroll">
       <div>
         <h1 className="text-sm xl:text-lg text-black">
           {selectedRoute.summary}
