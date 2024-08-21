@@ -223,7 +223,7 @@ const Infos = ({
               </h1>
               <p className="text-black font-light">{point.address}</p>
               <button
-                className="btn btn-primary btn-sm uppercase"
+                className="btn btn-primary btn-sm uppercase text-white"
                 onClick={() => handleShowRoute(point)}
               >
                 Show route

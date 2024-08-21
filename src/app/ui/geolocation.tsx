@@ -26,8 +26,7 @@ const Geolocation = () => {
     replace(`${pathname}?${params.toString()}`);
   };
 
-  useEffect(() => {
-    // check if browser supports geolocation api
+  const updateLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -52,12 +51,23 @@ const Geolocation = () => {
         }
       );
     }
+  };
+
+  // Update location when user first accesses the page
+  useEffect(() => {
+    const intervalId = setInterval(() => updateLocation(), 5000);
+
+    // Cleanup function to clear the interval
+    return () => clearInterval(intervalId);
   }, []);
 
+  // when the state of location changes, call handleSearch to change the search parameters and update location in 5 secs
   useEffect(() => {
     if (location && location.lng && location.lng) {
       handleSearch(location);
     }
+
+    console.log("handled");
   }, [location]);
 
   return null;

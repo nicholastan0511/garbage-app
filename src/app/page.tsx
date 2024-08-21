@@ -111,6 +111,8 @@ export default async function Home({
     );
   }
 
+  console.log("im rendered");
+
   return (
     <div className="h-screen w-screen bg-white">
       <div className="h-full flex flex-col justify-center items-center gap-5 font-bold text-2xl">
