@@ -25,10 +25,16 @@ const ClosestLocation = ({
     return null;
 
   return (
-    <div className="flex justify-center gap-3 items-center mt-10">
-      <p className="text-black text-center">
-        Closest garbage to you is {closestLocation.distance} mi away!
-      </p>
+    <div className="flex flex-col xl:flex-row p-3 justify-center gap-3 items-center bottom-3 xl:bottom-0 xl:left-1 xl:right-auto xl:top-auto pl-3 left-auto right-3 rounded-xl absolute glass text-sm font-light w-2/5 xl:w-auto ">
+      {closestLocation.distance >= 1 ? (
+        <p className="text-black text-center">
+          Closest garbage to you is {closestLocation.distance} km away!
+        </p>
+      ) : (
+        <p className="text-black text-center">
+          Closest garbage to you is {closestLocation.distance * 1000} m away!
+        </p>
+      )}
       <button
         className="btn btn-primary text-white"
         onClick={() => handleShowClosestLocation(closestLocation)}

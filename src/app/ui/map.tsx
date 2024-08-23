@@ -43,11 +43,9 @@ export const MapComponent = ({
     []
   );
 
-  console.log(searchLocation);
-
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_MAPS_API_KEY as string}>
-      <div className="h-2/3 w-full xl:w-2/3 rounded-xl">
+      <div className="h-5/6 w-full xl:w-5/6 rounded-xl">
         <Map
           defaultCenter={position}
           mapId={process.env.NEXT_PUBLIC_MAP_ID}
@@ -147,7 +145,7 @@ const UserMarker = ({
   return (
     <>
       <AdvancedMarker position={userLocation} onClick={() => setOpen(true)}>
-        <Image src="user.svg" width={80} height={80} alt="user" />
+        <Image src="user.svg" width={50} height={50} alt="user" />
       </AdvancedMarker>
       {open && (
         <InfoWindow position={userLocation} onClose={() => setOpen(false)}>
@@ -266,10 +264,14 @@ const SelectedMarker = ({
 
   return (
     <div>
-      <AdvancedMarker
-        position={position}
-        onClick={() => setOpen(true)}
-      ></AdvancedMarker>
+      <AdvancedMarker position={position} onClick={() => setOpen(true)}>
+        <Image
+          src="pointer_selected.svg"
+          alt="selected pointer"
+          width={30}
+          height={30}
+        ></Image>
+      </AdvancedMarker>
       {open && (
         <InfoWindow position={position} onClose={() => setOpen(false)}>
           <h1 className="text-black text-lg font-bold">{name}</h1>

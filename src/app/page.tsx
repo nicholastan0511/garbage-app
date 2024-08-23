@@ -70,9 +70,11 @@ export default async function Home({
   };
 
   let userLocality: string | null = null;
+  let city: string | null = null;
   if (userLocation.lat && userLocation.lng) {
     const data = await fetchUserLocality(userLocation);
     userLocality = data.locality;
+    city = data.city;
   }
 
   // filter garbage locations based on user's locality
@@ -128,8 +130,19 @@ export default async function Home({
   return (
     <div className="h-screen w-screen bg-white">
       <div className="h-full flex flex-col justify-center items-center gap-5 font-bold text-2xl">
+        <div className="flex justify-center w-5/6 items-center">
+          <Menu localities={localities} defaultValue={searchParams?.district} />
+        </div>
         <Geolocation />
-        <Menu localities={localities} defaultValue={searchParams?.district} />
+        {!userLocation.lat ||
+          (!userLocation.lng && (
+            <p className="text-red-500">
+              Please turn on location for best user experience.
+            </p>
+          ))}
+        {!closestLocation && userLocation && (
+          <p className="text-red-500">Data for {city} is not yet available.</p>
+        )}
         <MapComponent
           points={filteredLocations}
           userLocation={userLocation}

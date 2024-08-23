@@ -55,7 +55,7 @@ const Directions = ({
       .route({
         origin: userLocation,
         destination: destination,
-        travelMode: google.maps.TravelMode.DRIVING,
+        travelMode: google.maps.TravelMode.BICYCLING,
         provideRouteAlternatives: true,
       })
       .then((res) => {
@@ -72,9 +72,6 @@ const Directions = ({
   }, [routeIndex, directionsRenderer]);
 
   if (!leg) return null;
-
-  // console.log(directionsRenderer?.getMap());
-  // console.log("im rerendered");
 
   const handleCloseDirections = () => {
     if (directionsRenderer) {

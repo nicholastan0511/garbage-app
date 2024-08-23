@@ -26,11 +26,9 @@ const SearchBar = () => {
   const onSelect = (
     position: google.maps.LatLng | undefined,
     name: string | undefined,
-    address: string | undefined,
-    viewport: any
+    address: string | undefined
   ) => {
     if (!position || !name || !address) return;
-    console.log("Position log", position);
     const { lat, lng } = position;
     const params = new URLSearchParams(searchParams);
     params.set("search_lat", lat().toString());
@@ -53,17 +51,17 @@ const SearchBar = () => {
       const viewport = selectedPlace.geometry.viewport;
 
       if (viewport) map.fitBounds(viewport);
-      onSelect(position, name, address, viewport);
+      onSelect(position, name, address);
     });
   }, [autocomplete]);
 
   return (
-    <div className="form-control top-1.5 left-1.5 absolute flex items-center">
-      <div className="input-group">
+    <div className="form-control top-1.5 left-1.5 absolute flex items-center w-full">
+      <div className="input-group w-full">
         <input
           type="text"
           placeholder="Type address here..."
-          className="input input-bordered"
+          className="input input-bordered w-full max-w-xs"
           ref={inputRef}
         />
       </div>

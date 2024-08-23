@@ -2,7 +2,7 @@ export const haversine_distance = (
   mk1: google.maps.LatLngLiteral,
   mk2: google.maps.LatLngLiteral
 ) => {
-  const R = 3958.8; // Radius of the Earth in miles
+  const R = 6371.071; // Radius of the Earth in miles
   const rlat1 = mk1.lat * (Math.PI / 180); // Convert degrees to radians
   const rlat2 = mk2.lat * (Math.PI / 180); // Convert degrees to radians
   const difflat = rlat2 - rlat1; // Radian difference (latitudes)
