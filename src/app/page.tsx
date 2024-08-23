@@ -7,6 +7,7 @@ import { haversine_distance } from "./lib/helper";
 import Menu from "./ui/map-menu";
 import ClosestLocation from "./ui/closest-location";
 import { Point, SearchLocation } from "./lib/definitions";
+import AlertLocation from "./ui/alert-location";
 
 const mockData = [
   {
@@ -127,6 +128,8 @@ export default async function Home({
     };
   }
 
+  console.log(userLocation);
+
   return (
     <div className="h-screen w-screen bg-white">
       <div className="h-full flex flex-col justify-center items-center gap-5 font-bold text-2xl">
@@ -134,13 +137,8 @@ export default async function Home({
           <Menu localities={localities} defaultValue={searchParams?.district} />
         </div>
         <Geolocation />
-        {!userLocation.lat ||
-          (!userLocation.lng && (
-            <p className="text-red-500">
-              Please turn on location for best user experience.
-            </p>
-          ))}
-        {!closestLocation && userLocation && (
+        {!userLocality && <AlertLocation />}
+        {!closestLocation && userLocality && (
           <p className="text-red-500">Data for {city} is not yet available.</p>
         )}
         <MapComponent

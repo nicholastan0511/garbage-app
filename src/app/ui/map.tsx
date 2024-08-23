@@ -51,7 +51,7 @@ export const MapComponent = ({
           mapId={process.env.NEXT_PUBLIC_MAP_ID}
           defaultZoom={17}
           fullscreenControl={false}
-          disableDefaultUI={true}
+          mapTypeControl={false}
         >
           <SearchBar />
           <Markers
