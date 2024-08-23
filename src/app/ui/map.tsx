@@ -9,19 +9,22 @@ import {
 } from "@vis.gl/react-google-maps";
 import { ReactNode } from "react";
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
-import { Point } from "../lib/definitions";
+import { Point, SearchLocation } from "../lib/definitions";
 import Image from "next/image";
 import { Marker, MarkerClusterer } from "@googlemaps/markerclusterer";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import SearchBar from "./places-search";
 
 export const MapComponent = ({
   children,
   points,
   userLocation,
+  searchLocation,
 }: {
   children: ReactNode;
   points: Point[];
   userLocation: google.maps.LatLngLiteral | undefined;
+  searchLocation: SearchLocation;
 }) => {
   const position: google.maps.LatLngLiteral = {
     lat: 25.019238810705918,
@@ -40,6 +43,8 @@ export const MapComponent = ({
     []
   );
 
+  console.log(searchLocation);
+
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_MAPS_API_KEY as string}>
       <div className="h-2/3 w-full xl:w-2/3 rounded-xl">
@@ -48,7 +53,9 @@ export const MapComponent = ({
           mapId={process.env.NEXT_PUBLIC_MAP_ID}
           defaultZoom={17}
           fullscreenControl={false}
+          disableDefaultUI={true}
         >
+          <SearchBar />
           <Markers
             points={points}
             handleInfoWindowClick={handleInfoWindowClick}
@@ -58,6 +65,14 @@ export const MapComponent = ({
             points={points}
             setHandleInfoWindowClick={setHandleInfoWindowClickCallback}
           />
+          {/* render selected marker once searchLocation is ready */}
+          {searchLocation && (
+            <SelectedMarker
+              position={{ lat: searchLocation.lat, lng: searchLocation.lng }}
+              name={searchLocation.name}
+              address={searchLocation.address}
+            />
+          )}
           {children}
         </Map>
       </div>
@@ -218,7 +233,7 @@ const Infos = ({
             }}
           >
             <div className="flex flex-col gap-3">
-              <h1 className="text-extrabold text-xl text-black">
+              <h1 className="text-extrabold text-xl text-black font-bold">
                 {point.district}
               </h1>
               <p className="text-black font-light">{point.address}</p>
@@ -236,4 +251,31 @@ const Infos = ({
   }, [infoWindows, points, closeInfoWindow]);
 
   return <>{infoWindowComponents}</>;
+};
+
+const SelectedMarker = ({
+  position,
+  name,
+  address,
+}: {
+  position: google.maps.LatLngLiteral;
+  name: string;
+  address: string;
+}) => {
+  const [open, setOpen] = useState(true);
+
+  return (
+    <div>
+      <AdvancedMarker
+        position={position}
+        onClick={() => setOpen(true)}
+      ></AdvancedMarker>
+      {open && (
+        <InfoWindow position={position} onClose={() => setOpen(false)}>
+          <h1 className="text-black text-lg font-bold">{name}</h1>
+          <p className="text-black">{address}</p>
+        </InfoWindow>
+      )}
+    </div>
+  );
 };

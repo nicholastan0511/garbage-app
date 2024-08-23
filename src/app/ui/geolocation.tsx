@@ -66,8 +66,6 @@ const Geolocation = () => {
     if (location && location.lng && location.lng) {
       handleSearch(location);
     }
-
-    console.log("handled");
   }, [location]);
 
   return null;

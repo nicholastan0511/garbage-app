@@ -10,3 +10,12 @@ export type Point = google.maps.LatLngLiteral & {
   address: string;
   district: string;
 };
+
+export interface MapHandlerProps {
+  place: google.maps.places.PlaceResult | null;
+  marker: google.maps.marker.AdvancedMarkerElement | null;
+}
+
+export type SearchLocation =
+  | (google.maps.LatLngLiteral & { name: string; address: string })
+  | undefined;

@@ -6,7 +6,7 @@ import Directions from "./ui/directions";
 import { haversine_distance } from "./lib/helper";
 import Menu from "./ui/map-menu";
 import ClosestLocation from "./ui/closest-location";
-import { Point } from "./lib/definitions";
+import { Point, SearchLocation } from "./lib/definitions";
 
 const mockData = [
   {
@@ -42,6 +42,10 @@ export default async function Home({
     destination_lat: string;
     destination_lng: string;
     district: string;
+    search_lat: string;
+    search_lng: string;
+    search_name: string;
+    search_address: string;
   };
 }) {
   // format data to fit Point type
@@ -111,18 +115,29 @@ export default async function Home({
     );
   }
 
-  console.log("im rendered");
+  let searchLocation: SearchLocation = undefined;
+  if (searchParams && searchParams.search_lat && searchParams.search_lng) {
+    searchLocation = {
+      lat: parseFloat(searchParams.search_lat),
+      lng: parseFloat(searchParams.search_lng),
+      name: searchParams.search_name,
+      address: searchParams.search_address,
+    };
+  }
 
   return (
     <div className="h-screen w-screen bg-white">
       <div className="h-full flex flex-col justify-center items-center gap-5 font-bold text-2xl">
         <Geolocation />
         <Menu localities={localities} defaultValue={searchParams?.district} />
-        <MapComponent points={filteredLocations} userLocation={userLocation}>
+        <MapComponent
+          points={filteredLocations}
+          userLocation={userLocation}
+          searchLocation={searchLocation}
+        >
           {closestLocation && (
             <ClosestLocation closestLocation={closestLocation} />
           )}
-
           <Directions userLocation={userLocation} destination={destination} />
         </MapComponent>
       </div>

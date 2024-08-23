@@ -73,8 +73,8 @@ const Directions = ({
 
   if (!leg) return null;
 
-  console.log(directionsRenderer?.getMap());
-  console.log("im rerendered");
+  // console.log(directionsRenderer?.getMap());
+  // console.log("im rerendered");
 
   const handleCloseDirections = () => {
     if (directionsRenderer) {
