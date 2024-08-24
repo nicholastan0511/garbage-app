@@ -8,6 +8,7 @@ import Menu from "./ui/map-menu";
 import ClosestLocation from "./ui/closest-location";
 import { Point, SearchLocation } from "./lib/definitions";
 import AlertLocation from "./ui/alert-location";
+import AlertData from "./ui/alert-data";
 
 const mockData = [
   {
@@ -138,9 +139,7 @@ export default async function Home({
         </div>
         <Geolocation />
         {!userLocality && <AlertLocation />}
-        {!closestLocation && userLocality && (
-          <p className="text-red-500">Data for {city} is not yet available.</p>
-        )}
+        {!closestLocation && userLocality && <AlertData city={city} />}
         <MapComponent
           points={filteredLocations}
           userLocation={userLocation}

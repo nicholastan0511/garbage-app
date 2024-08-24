@@ -21,7 +21,7 @@ const Menu = ({
   };
 
   return (
-    <div>
+    <div className="mt-3">
       {/* <label htmlFor="districts">Choose a district</label> */}
       <select
         name="districts"
