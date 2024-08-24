@@ -9,6 +9,7 @@ import ClosestLocation from "./ui/closest-location";
 import { Point, SearchLocation } from "./lib/definitions";
 import AlertLocation from "./ui/alert-location";
 import AlertData from "./ui/alert-data";
+import MapHandler from "./ui/map-fit-handler";
 
 const mockData = [
   {
@@ -149,6 +150,9 @@ export default async function Home({
             <ClosestLocation closestLocation={closestLocation} />
           )}
           <Directions userLocation={userLocation} destination={destination} />
+          {searchParams && searchParams.district && (
+            <MapHandler district={searchParams.district} />
+          )}
         </MapComponent>
       </div>
     </div>
