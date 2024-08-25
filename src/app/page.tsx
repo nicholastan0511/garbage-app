@@ -141,6 +141,7 @@ export default async function Home({
         <Geolocation />
         {!userLocality && <AlertLocation />}
         {!closestLocation && userLocality && <AlertData city={city} />}
+
         <MapComponent
           points={filteredLocations}
           userLocation={userLocation}

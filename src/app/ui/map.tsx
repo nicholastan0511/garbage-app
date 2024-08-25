@@ -45,7 +45,7 @@ export const MapComponent = ({
 
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_MAPS_API_KEY as string}>
-      <div className="h-5/6 w-full xl:w-5/6 rounded-xl">
+      <div className="h-5/6 w-full xl:w-5/6 rounded-xl p-5 shadow-lg bg-gray-100">
         <Map
           defaultCenter={position}
           mapId={process.env.NEXT_PUBLIC_MAP_ID}
