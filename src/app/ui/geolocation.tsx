@@ -55,8 +55,13 @@ const Geolocation = () => {
 
   // Update location when user first accesses the page
   useEffect(() => {
-    const intervalId = setInterval(() => updateLocation(), 5000);
+    // if location is not initialized yet, fetch user location immediately
+    if (!location) {
+      updateLocation();
+      return;
+    }
 
+    const intervalId = setInterval(() => updateLocation(), 5000);
     // Cleanup function to clear the interval
     return () => clearInterval(intervalId);
   }, []);

@@ -72,12 +72,16 @@ export default async function Home({
     lng: parseFloat(lng as string),
   };
 
-  let userLocality: string | null = null;
+  let userLocality: string | undefined;
   let city: string | null = null;
   if (userLocation.lat && userLocation.lng) {
-    const data = await fetchUserLocality(userLocation);
-    userLocality = data.locality;
-    city = data.city;
+    try {
+      const data = await fetchUserLocality(userLocation);
+      userLocality = data.locality;
+      city = data.city;
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   // filter garbage locations based on user's locality
@@ -130,13 +134,17 @@ export default async function Home({
     };
   }
 
-  console.log(userLocation);
+  console.log(userLocality);
 
   return (
     <div className="h-screen w-screen bg-white">
       <div className="h-full flex flex-col justify-center items-center gap-5 font-bold text-2xl">
         <div className="flex justify-center w-5/6 items-center">
-          <Menu localities={localities} defaultValue={searchParams?.district} />
+          <Menu
+            localities={localities}
+            defaultValue={searchParams?.district}
+            userLocality={userLocality}
+          />
         </div>
         <Geolocation />
         {!userLocality && <AlertLocation />}
