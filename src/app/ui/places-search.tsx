@@ -50,7 +50,10 @@ const SearchBar = () => {
       const address = selectedPlace.formatted_address;
       const viewport = selectedPlace.geometry.viewport;
 
-      if (viewport) map.fitBounds(viewport);
+      if (viewport) {
+        map.fitBounds(viewport);
+        map.setZoom(15);
+      }
       onSelect(position, name, address);
     });
   }, [autocomplete]);

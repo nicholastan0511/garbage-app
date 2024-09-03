@@ -6,8 +6,9 @@ const MapHandler = ({ district }: { district: string }) => {
   const bounds = new google.maps.LatLngBounds();
   const map = useMap();
 
+  // fitbounds to chosen district
   useEffect(() => {
-    console.log("im called");
+    console.log("district", district);
     if (!map || !district) return;
     const geocoder = new google.maps.Geocoder();
     geocoder.geocode(

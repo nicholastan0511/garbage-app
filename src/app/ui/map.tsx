@@ -144,7 +144,11 @@ const UserMarker = ({
 
   return (
     <>
-      <AdvancedMarker position={userLocation} onClick={() => setOpen(true)}>
+      <AdvancedMarker
+        position={userLocation}
+        style={{ animation: "drop 0.5s ease-in-out" }}
+        onClick={() => setOpen(true)}
+      >
         <Image src="user.svg" width={50} height={50} alt="user" />
       </AdvancedMarker>
       {open && (

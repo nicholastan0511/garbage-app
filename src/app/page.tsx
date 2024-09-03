@@ -10,6 +10,7 @@ import { Point, SearchLocation } from "./lib/definitions";
 import AlertLocation from "./ui/alert-location";
 import AlertData from "./ui/alert-data";
 import MapHandler from "./ui/map-fit-handler";
+import UserFitHandler from "./ui/map-user-fit-handler";
 
 const mockData = [
   {
@@ -162,6 +163,9 @@ export default async function Home({
           {searchParams && searchParams.district && (
             <MapHandler district={searchParams.district} />
           )}
+          {userLocation.lat && userLocation.lng ? (
+            <UserFitHandler userLocation={userLocation} />
+          ) : null}
         </MapComponent>
       </div>
     </div>
