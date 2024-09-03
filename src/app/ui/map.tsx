@@ -14,6 +14,7 @@ import Image from "next/image";
 import { Marker, MarkerClusterer } from "@googlemaps/markerclusterer";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import SearchBar from "./places-search";
+import { calcBearing } from "../lib/helper";
 
 export const MapComponent = ({
   children,
@@ -141,12 +142,28 @@ const UserMarker = ({
   userLocation: google.maps.LatLngLiteral;
 }) => {
   const [open, setOpen] = useState<boolean>(false);
+  const [bearing, setBearing] = useState(0);
+  const [prevPosition, setPrevPosition] = useState(userLocation);
+
+  // for every change in userLocation, update bearing
+  useEffect(() => {
+    if (prevPosition.lat && prevPosition.lng) {
+      setPrevPosition((prevPosition) => {
+        const newBearing = calcBearing(prevPosition, userLocation);
+        setBearing(newBearing);
+        return userLocation;
+      });
+    }
+  }, [userLocation]);
 
   return (
     <>
       <AdvancedMarker
         position={userLocation}
-        style={{ animation: "drop 0.5s ease-in-out" }}
+        style={{
+          transform: `rotate(${bearing}deg)`,
+          transition: "transform 0.5s ease",
+        }}
         onClick={() => setOpen(true)}
       >
         <Image src="user.svg" width={50} height={50} alt="user" />

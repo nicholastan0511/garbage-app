@@ -22,3 +22,22 @@ export const haversine_distance = (
     );
   return d;
 };
+
+export const calcBearing = (
+  from: google.maps.LatLngLiteral,
+  to: google.maps.LatLngLiteral
+) => {
+  const fromLat = (from.lat * Math.PI) / 180;
+  const fromLng = (from.lng * Math.PI) / 180;
+  const toLat = (to.lat * Math.PI) / 180;
+  const toLng = (to.lng * Math.PI) / 180;
+
+  const dLng = toLng - fromLng;
+  const y = Math.sin(dLng) * Math.cos(toLat);
+  const x =
+    Math.cos(fromLat) * Math.sin(toLat) -
+    Math.sin(fromLat) * Math.cos(toLat) * Math.cos(dLng);
+  const bearing = (Math.atan2(y, x) * 180) / Math.PI;
+
+  return (bearing + 360) % 360;
+};
