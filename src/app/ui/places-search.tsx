@@ -30,7 +30,9 @@ const SearchBar = () => {
   ) => {
     if (!position || !name || !address) return;
     const { lat, lng } = position;
-    const params = new URLSearchParams(searchParams);
+    console.log("search params", searchParams.toString());
+    const params = new URLSearchParams(window.location.search);
+    console.log("params", params.toString());
     params.set("search_lat", lat().toString());
     params.set("search_lng", lng().toString());
     params.set("search_name", name);
@@ -54,6 +56,8 @@ const SearchBar = () => {
         map.fitBounds(viewport);
         map.setZoom(15);
       }
+
+      // changes the parameter
       onSelect(position, name, address);
     });
   }, [autocomplete]);

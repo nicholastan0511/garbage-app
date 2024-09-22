@@ -27,7 +27,8 @@ const Menu = ({
     userLocation = localities[userLocality];
   }
 
-  console.log(userLocation);
+  console.log("user location", userLocation);
+  console.log("default value", defaultValue);
 
   return (
     <div className="mt-3">
@@ -36,13 +37,7 @@ const Menu = ({
         id="districts"
         className="text-black bg-white outline-none rounded-xl border-solid border-4 hover:cursor-pointer  font-light p-3"
         onChange={({ target }) => handleSelect(target.value)}
-        defaultValue={
-          !defaultValue
-            ? userLocation
-            : !defaultValue && !userLocation
-            ? "option"
-            : defaultValue
-        }
+        defaultValue={userLocation || defaultValue || "option"}
       >
         <option value="option" disabled>
           Choose a district

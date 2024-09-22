@@ -145,6 +145,8 @@ const UserMarker = ({
   const [bearing, setBearing] = useState(0);
   const [prevPosition, setPrevPosition] = useState(userLocation);
 
+  console.log("bearing", bearing);
+
   // for every change in userLocation, update bearing
   useEffect(() => {
     if (prevPosition.lat && prevPosition.lng) {

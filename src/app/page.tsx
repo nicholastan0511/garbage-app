@@ -1,7 +1,6 @@
 import { fetchAllGarbageData, fetchUserLocality } from "./lib/data";
 import { MapComponent } from "./ui/map";
 import Geolocation from "./ui/geolocation";
-import Image from "next/image";
 import Directions from "./ui/directions";
 import { haversine_distance } from "./lib/helper";
 import Menu from "./ui/map-menu";
