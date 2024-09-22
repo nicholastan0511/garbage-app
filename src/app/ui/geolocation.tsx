@@ -61,7 +61,7 @@ const Geolocation = () => {
       return;
     }
 
-    const intervalId = setInterval(() => updateLocation(), 5000);
+    const intervalId = setInterval(() => updateLocation(), 2500);
     // Cleanup function to clear the interval
     return () => clearInterval(intervalId);
   }, []);
